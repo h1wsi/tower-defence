@@ -3,21 +3,22 @@ from enemy import Enemy
 
 pygame.init()
 
-# screen
+# настройки игровой панели
 HIGHT, WEIGHT = 600, 700
 FPS = 60
+walking_points = [(100, 100), (500, 300), (500, 200), (300, 400)]
 
 window = pygame.display.set_mode((WEIGHT, HIGHT))
 clock = pygame.time.Clock()
 
-# images
-enemy_img = pygame.image.load("src/troll.png").convert_alpha()
+# изображения
+enemy_img = pygame.image.load("src/tank.png").convert_alpha()
 
-# groups
+# группы
 enemy_grp = pygame.sprite.Group()
 
-# characters
-enemy = Enemy((200, 300), enemy_img)
+# персонажи
+enemy = Enemy(walking_points, enemy_img)
 enemy_grp.add(enemy)
 
 
@@ -25,6 +26,9 @@ play = True
 while play:
 
     window.fill("white")
+    
+    # движение вражеского персонажа
+    pygame.draw.lines(window, "black", False, walking_points)
 
     enemy_grp.update()
     enemy_grp.draw(window)
