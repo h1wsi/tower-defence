@@ -1,5 +1,6 @@
 
 import turtle
+import random
 
 turtle.speed(0)
 turtle.bgcolor("black")
@@ -52,7 +53,7 @@ class Game():
 	def __init__(self):
 		
 		self.score = 0
-		self.state = "kill"
+		self.state = "play"
 		self.pen = turtle.Turtle()
 		self.lives = 5
 		
@@ -105,12 +106,20 @@ class Player(Screen):
 	def deboost(self):
 		self.speed -= 1
 
+class Enemy(Screen):
+	def __init__(self, object, color, x0, y0):
+		Screen.__init__(self, object, color, x0, y0)
+
+		self.speed = 2
+		self.setheading(random.randint(0,360))
+
 # Создание объектов
 game = Game()
 game.frame()
 game.scoreboard()
 
-player = Player("circle", "yellow", 0.0, 0.0)
+player = Player("triangle", "yellow", 0.0, 0.0)
+enemy = Enemy("circle", "red", -100, 0)
 
 # Считывание событий клавиатуры (стрелки)
 turtle.onkey(player.left, "Left")
@@ -121,4 +130,15 @@ turtle.listen()
 
 # Цикл для работы игры
 while True:
+
 	player.move()
+	enemy.move()
+
+	if player.bump(enemy):
+		
+		x = random.randint(-200, 200)
+		y = random.randint(-200, 200)
+		enemy.goto(x, y)
+		enemy.speed += 1
+		game.lives -= 1
+		game.scoreboard()
