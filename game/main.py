@@ -2,7 +2,7 @@
 import turtle
 
 turtle.speed(0)
-turtle.bgcolor("white")
+turtle.bgcolor("black")
 turtle.bgpic("src/space.png")
 turtle.setundobuffer(1)
 turtle.ht()
@@ -40,6 +40,52 @@ class Screen(turtle.Turtle):
 			self.rt(60)
 			self.sety(300)
 
+	# функция для обнаружения столкновений между объектами через проверку расстояния между их центрами
+	def bump(self, other):
+		if (self.xcor() >= (other.xcor() - 20)) and (self.xcor() <= (other.xcor() + 20)) and \
+			(self.ycor() >= (other.ycor() - 20)) and (self.ycor() <= (other.ycor() + 20)):
+			return True
+		else:
+			return False
+
+class Game():
+	def __init__(self):
+		
+		self.score = 0
+		self.state = "kill"
+		self.pen = turtle.Turtle()
+		self.lives = 5
+		
+	def frame(self):
+		# установка скорости, толщины пера, и перенос pen в верхний левый угол
+		self.pen.speed(0)
+		self.pen.pensize(3)
+		self.pen.penup()
+		self.pen.goto(-300, 300)
+		self.pen.pendown()
+		
+		# pen рисует рамку, поворачивая на 90 градусов после каждой стороны
+		for _ in range(4):
+			self.pen.fd(600)
+			self.pen.rt(90)
+		self.pen.penup()
+		self.pen.ht()
+	
+	def scoreboard(self):
+
+		# Создание борды с очками и оставшимися жизнями
+		self.pen.undo()
+		if game.lives > 0:
+			message = f"Lives: {self.lives} Score: {self.score}"		
+		else: 
+			message = f"Score: {self.score}"
+
+		self.pen.penup()
+		self.pen.color("white")
+		self.pen.goto(-300, 310)
+		self.pen.write(message, font=("Conslolas", 14, "normal"))
+		self.pen.ht()
+
 class Player(Screen):
 
 	# Определение вида модели игрока и его характеристик
@@ -48,20 +94,22 @@ class Player(Screen):
 		self.speed = 0
 		self.lives = 5
 		self.shapesize(stretch_wid=0.8, stretch_len=1.3, outline=None)
-	 
+	
 	def left(self):
 		self.lt(60)
-		
 	def right(self):
 		self.rt(60)
-				
+
 	def boost(self):
 		self.speed += 2
-		
 	def deboost(self):
 		self.speed -= 1
 
 # Создание объектов
+game = Game()
+game.frame()
+game.scoreboard()
+
 player = Player("circle", "yellow", 0.0, 0.0)
 
 # Считывание событий клавиатуры (стрелки)
@@ -71,7 +119,6 @@ turtle.onkey(player.boost, "Up")
 turtle.onkey(player.deboost, "Down")
 turtle.listen()
 
+# Цикл для работы игры
 while True:
 	player.move()
-
-# prn = input("")
